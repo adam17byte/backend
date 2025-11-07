@@ -1,0 +1,72 @@
+{% extends "base.html" %}
+
+{% block title %}Profil User{% endblock %}
+
+{% block custom_css %}
+<style>
+    .profile-container {
+        max-width: 450px;
+        margin: auto;
+        padding-top: 20px;
+    }
+
+    .profile-card {
+        border-radius: 15px;
+        padding: 20px;
+    }
+
+    .profile-avatar {
+        width: 110px;
+        height: 110px;
+        border-radius: 100%;
+        object-fit: cover;
+        border: 3px solid #ff8c00;
+    }
+
+    .edit-icon {
+        font-size: 17px;
+        margin-left: 8px;
+        cursor: pointer;
+        color: #ff8c00;
+    }
+
+    .btn-logout {
+        width: 100%;
+        background-color: #dc3545;
+        border: none;
+        padding: 10px;
+        border-radius: 8px;
+        color: white;
+        font-weight: 600;
+        transition: 0.2s;
+    }
+
+    .btn-logout:hover {
+        background-color: #bb2d3b;
+    }
+</style>
+{% endblock %}
+
+{% block content %}
+<div class="container profile-container">
+
+    <div class="card shadow profile-card text-center">
+        <img src="/static/user.png" class="profile-avatar mx-auto mb-3" alt="User">
+
+        <h4 class="fw-bold">
+            {{ customer.nama }}
+            <a href="{{ url_for('profil_edit') }}">
+                <i class="bi bi-pencil-square edit-icon"></i>
+            </a>
+        </h4>
+
+        <p class="mb-1"><strong>No Telepon:</strong> {{ customer.telepon }}</p>
+        <p class="mb-3"><strong>Alamat:</strong> {{ customer.alamat }}</p>
+
+        <a href="{{ url_for('logout') }}">
+            <button class="btn-logout mt-3">Logout</button>
+        </a>
+    </div>
+
+</div>
+{% endblock %}

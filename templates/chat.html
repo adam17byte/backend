@@ -1,0 +1,134 @@
+{% extends "base.html" %}
+
+{% block title %}Chat{% endblock %}
+
+{% block custom_css %}
+<style>
+    .chat-container {
+        max-width: 600px;
+        margin: 2rem auto;
+        display: flex;
+        flex-direction: column;
+        height: 80vh;
+        border: 1px solid #ddd;
+        border-radius: 1rem;
+        overflow: hidden;
+        background-color: #f9f9f9;
+    }
+
+    .chat-header {
+        padding: 1rem;
+        background-color: #ff8c00;
+        color: white;
+        font-weight: 600;
+        display: flex;
+        align-items: center;
+        gap: 0.6rem;
+    }
+
+    .chat-messages {
+        flex: 1;
+        padding: 1rem;
+        overflow-y: auto;
+        display: flex;
+        flex-direction: column;
+        gap: 0.5rem;
+        background-color: #f4f4f4;
+    }
+
+    .message {
+        max-width: 70%;
+        padding: 0.6rem 1rem;
+        border-radius: 1rem;
+        word-wrap: break-word;
+    }
+
+    .message.user {
+        background-color: #ff8c00;
+        color: white;
+        align-self: flex-end;
+        border-bottom-right-radius: 0;
+    }
+
+    .message.tukang {
+        background-color: #e2e2e2;
+        color: #333;
+        align-self: flex-start;
+        border-bottom-left-radius: 0;
+    }
+
+    .chat-input {
+        display: flex;
+        gap: 0.5rem;
+        padding: 0.5rem 1rem;
+        border-top: 1px solid #ddd;
+        background-color: #fff;
+    }
+
+    .chat-input input {
+        flex: 1;
+        padding: 0.5rem 1rem;
+        border-radius: 999px;
+        border: 1px solid #ccc;
+    }
+
+    .chat-input button {
+        background-color: #ff8c00;
+        color: white;
+        border: none;
+        padding: 0 20px;
+        border-radius: 999px;
+        cursor: pointer;
+    }
+</style>
+{% endblock %}
+
+{% block content %}
+
+<div class="chat-container">
+
+    <div class="chat-header">
+        <i class="bi bi-arrow-left" style="cursor:pointer" onclick="window.history.back()"></i>
+        Chat dengan {{ tukang.nama }}
+    </div>
+
+    <div class="chat-messages" id="chatMessages">
+        <div class="message tukang">Halo, ada yang bisa saya bantu?</div>
+        <div class="message user">Saya ingin memperbaiki pipa bocor.</div>
+    </div>
+
+    <form class="chat-input" id="chatForm">
+        <input type="text" id="messageInput" placeholder="Tulis pesan..." autocomplete="off">
+        <button type="submit">Kirim</button>
+    </form>
+</div>
+
+<script>
+    const chatForm = document.getElementById('chatForm');
+    const chatMessages = document.getElementById('chatMessages');
+    const messageInput = document.getElementById('messageInput');
+
+    chatForm.addEventListener('submit', function(e) {
+        e.preventDefault();
+        const text = messageInput.value.trim();
+        if(text === '') return;
+
+        const userMessage = document.createElement('div');
+        userMessage.classList.add('message', 'user');
+        userMessage.textContent = text;
+        chatMessages.appendChild(userMessage);
+
+        chatMessages.scrollTop = chatMessages.scrollHeight;
+        messageInput.value = '';
+
+        setTimeout(() => {
+            const tukangMessage = document.createElement('div');
+            tukangMessage.classList.add('message', 'tukang');
+            tukangMessage.textContent = "Pesan diterima, Pak.";
+            chatMessages.appendChild(tukangMessage);
+            chatMessages.scrollTop = chatMessages.scrollHeight;
+        }, 800);
+    });
+</script>
+
+{% endblock %}

@@ -1,0 +1,147 @@
+{% extends "base.html" %}
+
+{% block title %}Profil Tukang{% endblock %}
+
+{% block custom_css %}
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
+<style>
+    .container-profil {
+        max-width: 700px;
+        margin: 2rem auto;
+        padding: 1.5rem;
+        background: #fff;
+        border-radius: 15px;
+        box-shadow: 0 5px 20px rgba(0,0,0,0.08);
+    }
+
+    .profil-header {
+        display: flex;
+        align-items: center;
+        gap: 1rem;
+    }
+
+    .profil-header img {
+        width: 120px;
+        height: 120px;
+        object-fit: cover;
+        border-radius: 15px;
+    }
+
+    .profil-info h2 {
+        font-size: 1.5rem;
+        font-weight: 700;
+        margin: 0;
+    }
+
+    .profil-info p {
+        margin: 4px 0;
+        font-size: 1rem;
+        color: #555;
+    }
+
+    .star-icon {
+        color: #FFD700;
+        font-size: 1rem;
+    }
+    .star-icon.inactive {
+        color: #ccc;
+    }
+
+    .pengalaman {
+        margin-top: 1rem;
+        font-size: 0.95rem;
+        color: #333;
+    }
+
+    .review-container {
+        margin-top: 2rem;
+    }
+
+    .review-summary {
+        display: flex;
+        align-items: center;
+        gap: 0.5rem;
+        font-weight: 600;
+        margin-bottom: 1rem;
+    }
+
+    .review-item {
+        display: flex;
+        gap: 0.75rem;
+        margin-bottom: 1rem;
+        padding: 0.75rem;
+        background: #f9f9f9;
+        border-radius: 10px;
+    }
+
+    .review-item img {
+        width: 50px;
+        height: 50px;
+        border-radius: 50%;
+        object-fit: cover;
+    }
+
+    .review-content p {
+        margin: 2px 0;
+    }
+</style>
+{% endblock %}
+
+{% block content %}
+<div class="container container-profil">
+    <!-- Header Profil -->
+    <div class="profil-header">
+        <img src="{{ tukang['foto'] }}" alt="Foto Tukang">
+        <div class="profil-info">
+            <h2>{{ tukang['nama'] }}</h2>
+            <p>{{ tukang['keahlian'] }}</p>
+            <div>
+                {% set rating = tukang['rating']|round(0, 'floor') %}
+                {% for i in range(5) %}
+                    {% if i < rating %}
+                        <i class="fas fa-star star-icon"></i>
+                    {% else %}
+                        <i class="fas fa-star star-icon inactive"></i>
+                    {% endif %}
+                {% endfor %}
+                <span>({{ tukang['jumlah_review'] }} review)</span>
+            </div>
+        </div>
+    </div>
+
+    <div class="pengalaman">
+        <strong>Pengalaman:</strong> {{ tukang['pengalaman'] }}
+    </div>
+
+    <div class="review-container">
+        <div class="review-summary">
+            <span>Total Rating: {{ tukang['rating'] }}</span> | 
+            <span>Jumlah Reviewer: {{ tukang['jumlah_review'] }}</span>
+        </div>
+
+        {% set contoh_reviews = [
+            {'nama':'Andi', 'foto':'https://placehold.co/50x50', 'rating':5, 'komentar':'Pelayanan sangat bagus!'},
+            {'nama':'Sari', 'foto':'https://placehold.co/50x50', 'rating':4, 'komentar':'Pekerjaan rapi dan cepat.'}
+        ] %}
+
+        {% for review in contoh_reviews %}
+        <div class="review-item">
+            <img src="{{ review['foto'] }}" alt="Foto Reviewer">
+            <div class="review-content">
+                <p><strong>{{ review['nama'] }}</strong></p>
+                <div>
+                    {% for i in range(5) %}
+                        {% if i < review['rating'] %}
+                            <i class="fas fa-star star-icon"></i>
+                        {% else %}
+                            <i class="fas fa-star star-icon inactive"></i>
+                        {% endif %}
+                    {% endfor %}
+                </div>
+                <p>{{ review['komentar'] }}</p>
+            </div>
+        </div>
+        {% endfor %}
+    </div>
+</div>
+{% endblock %}

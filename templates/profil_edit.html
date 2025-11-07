@@ -1,0 +1,123 @@
+{% extends "base.html" %}
+
+{% block title %}Pengaturan Profil - Teman Tukang{% endblock %}
+{% set active_page = "profil" %}
+
+{% block custom_css %}
+<style>
+    body {
+        background-color: #f5f6fa;
+    }
+
+    .profile-card {
+        background: #ffffff;
+        padding: 30px;
+        border-radius: 12px;
+        box-shadow: 0 4px 12px rgba(0,0,0,0.08);
+        max-width: 600px;
+        margin: auto;
+        position: relative;
+    }
+
+    .profile-title {
+        font-size: 1.5rem;
+        font-weight: 600;
+        color: #333;
+        margin-bottom: 25px;
+    }
+
+    .btn-save {
+        background-color: #ff8c00;
+        color: white;
+        font-weight: 600;
+        padding: 10px 20px;
+        border-radius: 8px;
+        border: none;
+    }
+
+    .btn-save:hover {
+        background-color: #e67e00;
+    }
+
+    .profile-img {
+        width: 110px;
+        height: 110px;
+        border-radius: 50%;
+        object-fit: cover;
+        border: 3px solid #ddd;
+        margin-bottom: 15px;
+    }
+
+    .btn-back {
+        background-color: transparent;
+        border: none;
+        font-size: 1.2rem;
+        color: #ff8c00;
+        cursor: pointer;
+        font-weight: 600;
+        margin-bottom: 15px;
+    }
+
+    .btn-back:hover {
+        color: #e67e00;
+    }
+</style>
+{% endblock %}
+
+{% block content %}
+<div class="container my-5">
+
+    <div class="profile-card">
+
+        <!-- ✅ Tombol kembali -->
+        <a href="{{ url_for('profil_user') }}" class="btn-back">
+            <i class="bi bi-arrow-left"></i> Kembali
+        </a>
+
+        <h3 class="profile-title text-center">Pengaturan Profil</h3>
+
+        <form method="POST" enctype="multipart/form-data">
+
+            <div class="text-center">
+                <img src="/static/profile_default.jpg" class="profile-img" id="previewFoto">
+                <div>
+                    <input type="file" class="form-control mt-2" name="foto" accept="image/*" onchange="previewImage(event)">
+                </div>
+            </div>
+
+            <div class="mt-4">
+                <label class="form-label">Nama Lengkap</label>
+                <input type="text" class="form-control" name="nama" placeholder="Masukkan nama anda">
+            </div>
+
+            <div class="mt-3">
+                <label class="form-label">Email</label>
+                <input type="email" class="form-control" name="email" placeholder="email@contoh.com">
+            </div>
+
+            <div class="mt-3">
+                <label class="form-label">No Telepon</label>
+                <input type="text" class="form-control" name="telepon" placeholder="08123xxxxx">
+            </div>
+
+            <div class="mt-3">
+                <label class="form-label">Alamat</label>
+                <textarea class="form-control" name="alamat" rows="3" placeholder="Alamat lengkap"></textarea>
+            </div>
+
+            <div class="text-end mt-4">
+                <button type="submit" class="btn-save">Simpan Perubahan</button>
+            </div>
+
+        </form>
+    </div>
+
+</div>
+
+<script>
+function previewImage(event) {
+    const output = document.getElementById('previewFoto');
+    output.src = URL.createObjectURL(event.target.files[0]);
+}
+</script>
+{% endblock %}

@@ -1,0 +1,123 @@
+{% extends "base.html" %}
+
+{% block title %}Beranda - Teman Tukang{% endblock %}
+
+{% set active_page = 'dashboard' %}
+
+{% block custom_css %}
+<style>
+    .hero-section {
+        width: 100%;
+        height: 550px;
+        overflow: hidden;
+        background-image: url('https://assets.promediateknologi.id/crop/0x0:0x0/750x500/webp/photo/2023/02/11/969053708.jpeg');
+        background-size: cover;
+        background-position: center;
+        position: relative;
+        border-radius: 0 0 10px 10px;
+    }
+
+    .hero-overlay {
+        position: absolute;
+        inset: 0;
+        background-color: rgba(255, 255, 255, 0.7);
+        display: flex;
+        flex-direction: column;
+        justify-content: center;
+        align-items: center;
+        text-align: center;
+        padding: 20px;
+    }
+
+    .hero-title {
+        font-size: 2.5rem;
+        font-weight: bold;
+        color: #ff8c00;
+        margin-bottom: 5px;
+    }
+
+    .hero-subtitle {
+        font-size: 1.1rem;
+        color: #333;
+        max-width: 650px;
+    }
+
+    .content-title {
+        font-size: 1.5rem;
+        font-weight: 600;
+        margin-bottom: 25px;
+        text-align: center;
+    }
+
+    .content-box {
+        background-color: white;
+        border: 1px solid #eee;
+        height: 200px;
+        border-radius: 8px;
+        box-shadow: 0 2px 5px rgba(0,0,0,.05);
+        transition: 0.2s;
+    }
+    .content-box:hover {
+        transform: translateY(-3px);
+        box-shadow: 0 5px 12px rgba(0,0,0,0.1);
+        cursor: pointer;
+    }
+
+    .floating-chat-btn {
+        position: fixed;
+        bottom: 25px;
+        right: 25px;
+        width: 65px;
+        height: 65px;
+        background-color: #ff8c00;
+        border-radius: 50%;
+        display: flex;
+        justify-content: center;
+        align-items: center;
+        color: white;
+        font-size: 1.7rem;
+        box-shadow: 0 4px 8px rgba(0,0,0,.2);
+        cursor: pointer;
+        z-index: 999;
+    }
+    .floating-chat-btn:hover {
+        background-color: #e67e00;
+    }
+</style>
+{% endblock %}
+
+{% block content %}
+
+<div class="container-fluid p-0">
+    <div class="hero-section">
+        <div class="hero-overlay">
+            <h1 class="hero-title">Selamat Datang!</h1>
+            <p class="hero-subtitle">
+                Temukan layanan tukang profesional dan terpercaya untuk semua kebutuhan renovasi dan perbaikan Anda.
+            </p>
+        </div>
+    </div>
+</div>
+
+<div class="container mt-5">
+
+    <h3 class="content-title">Layanan Teman Tukang</h3>
+    <div class="row mb-5">
+        <div class="col-md-4"><div class="content-box"></div></div>
+        <div class="col-md-4"><div class="content-box"></div></div>
+        <div class="col-md-4"><div class="content-box"></div></div>
+    </div>
+
+    <h3 class="content-title">Panduan</h3>
+    <div class="row justify-content-center mb-5">
+        <div class="col-md-4"><div class="content-box"></div></div>
+        <div class="col-md-4"><div class="content-box"></div></div>
+    </div>
+
+</div>
+
+<div class="floating-chat-btn" onclick="window.location.href='#';">
+    <i class="bi bi-robot"></i>
+</div>
+
+{% endblock %}
