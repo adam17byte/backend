@@ -20,28 +20,62 @@ SIMULATED_TUKANG = [
      "rating": 4.7, "jumlah_review": 10, "pengalaman": "5 tahun pengalaman", "foto":"https://placehold.co/150x150"},
 ]
 
+dummy_user = {
+    "email": "dinda@gmail.com",
+    "password": "123456"
+}
+
+registered_users = []
+
 @app.route('/')
 def index():
     return redirect(url_for('dashboard')) if 'user' in session else redirect(url_for('login'))
 
-
 @app.route('/login', methods=['GET', 'POST'])
 def login():
     if request.method == 'POST':
-        session['user'] = request.form.get('email')
-        flash("Login berhasil!")
-        return redirect(url_for('dashboard'))
+
+        email = request.form.get('email')
+        password = request.form.get('password')
+
+        if email == dummy_user["email"] and password == dummy_user["password"]:
+            session['user'] = email
+            return redirect(url_for('dashboard'))
+        else:
+            flash("Email atau password salah!", "danger")
+            return redirect(url_for('login'))
+
     return render_template('login.html')
 
 @app.route('/register', methods=['GET', 'POST'])
 def register():
     if request.method == 'POST':
-        session['username'] = request.form.get('username')
-        session['email'] = request.form.get('email')
-        flash("Registrasi berhasil! Silakan login.")
-        return redirect(url_for('login'))
-    return render_template('register.html')
 
+        username = request.form.get('username')
+        email = request.form.get('email')
+        password = request.form.get('password')
+
+        # ✅ CEK FORM KOSONG
+        if not username or not email or not password:
+            flash("Semua form harus diisi!", "danger")
+            return redirect(url_for('register'))
+
+        # ✅ CEK MINIMAL PASSWORD 6 KARAKTER
+        if len(password) < 6:
+            flash("Password minimal 6 karakter!", "danger")
+            return redirect(url_for('register'))
+
+        # ✅ SIMPAN DATA USER (SIMULASI, TANPA DATABASE)
+        registered_users.append({
+            "username": username,
+            "email": email,
+            "password": password
+        })
+
+        flash("Registrasi berhasil! Silakan login.", "success")
+        return redirect(url_for('login'))
+
+    return render_template('register.html')
 @app.route('/dashboard')
 def dashboard():
     if 'user' not in session:

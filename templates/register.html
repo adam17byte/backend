@@ -123,6 +123,18 @@
             <p class="subtitle">Silakan isi data di bawah ini</p>
         </div>
 
+        <!-- ✅ FLASH MESSAGE DITAMBAHKAN DI SINI -->
+        {% with messages = get_flashed_messages(with_categories=true) %}
+        {% if messages %}
+            {% for category, message in messages %}
+                <div class="alert alert-{{ 'success' if category == 'success' else 'danger' }} text-center py-2">
+                    {{ message }}
+                </div>
+            {% endfor %}
+        {% endif %}
+        {% endwith %}
+        <!-- ✅ SELESAI -->
+
         <form method="POST">
 
             <div class="input-group-custom">

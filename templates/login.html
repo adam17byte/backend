@@ -115,9 +115,13 @@
             <p class="subtitle">Masuk untuk melanjutkan</p>
         </div>
 
-        {% with messages = get_flashed_messages() %}
+        {% with messages = get_flashed_messages(with_categories=true) %}
         {% if messages %}
-            <div class="alert alert-danger py-2">{{ messages[0] }}</div>
+            {% for category, message in messages %}
+                <div class="alert alert-{{ 'success' if category == 'success' else 'danger' }} text-center py-2">
+                    {{ message }}
+                </div>
+            {% endfor %}
         {% endif %}
         {% endwith %}
 
