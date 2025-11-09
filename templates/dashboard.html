@@ -51,11 +51,11 @@
         font-size: 1rem;
         text-decoration: none;
         transition: 0.2s;
-        box-shadow: 0 2px 5px rgba(0,0,0,0.15);
+        box-shadow: 0 2px 5px rgba(0, 0, 0, 0.15);
     }
+
     .hero-btn:hover {
         background-color: #e67e00;
-        color: #fff;
         transform: translateY(-2px);
     }
 
@@ -73,7 +73,7 @@
         background-color: white;
         border: 1px solid #eee;
         border-radius: 8px;
-        box-shadow: 0 2px 5px rgba(0,0,0,.05);
+        box-shadow: 0 2px 5px rgba(0, 0, 0, .05);
         transition: 0.2s;
         height: 200px;
         display: flex;
@@ -83,46 +83,54 @@
         font-weight: 500;
         text-align: center;
     }
+
     .content-box i {
         font-size: 2.5rem;
         color: #ff8c00;
         margin-bottom: 10px;
     }
+
     .content-box:hover {
         transform: translateY(-3px);
-        box-shadow: 0 5px 12px rgba(0,0,0,0.1);
+        box-shadow: 0 5px 12px rgba(0, 0, 0, 0.1);
         cursor: pointer;
     }
 
-    /* Artikel Horizontal */
+    /* Card Panduan */
     .article-card {
         display: flex;
+        flex-direction: column;
+        /* default mobile */
         background: white;
         border-radius: 10px;
         border: 1px solid #eee;
-        box-shadow: 0 2px 6px rgba(0,0,0,.08);
+        box-shadow: 0 2px 6px rgba(0, 0, 0, .08);
         overflow: hidden;
-        margin-bottom: 25px;
         transition: 0.2s ease-in-out;
     }
+
     .article-card:hover {
         transform: translateY(-3px);
-        box-shadow: 0 5px 15px rgba(0,0,0,0.12);
+        box-shadow: 0 5px 15px rgba(0, 0, 0, 0.12);
     }
+
     .article-card img {
-        width: 40%;
-        height: 230px;
+        width: 100%;
+        height: auto;
+        /* tinggi mengikuti gambar */
         object-fit: cover;
     }
+
     .article-content {
         padding: 18px 22px;
-        width: 60%;
     }
+
     .article-card h5 {
         color: #ff8c00;
         font-weight: 600;
         margin-bottom: 10px;
     }
+
     .article-card p {
         color: #555;
         font-size: 0.95rem;
@@ -130,17 +138,39 @@
         margin-bottom: 0;
     }
 
-    @media (max-width: 768px) {
-        .article-card {
-            flex-direction: column;
-        }
-        .article-card img {
-            width: 100%;
-            height: 200px;
-        }
-        .article-content {
-            width: 100%;
-        }
+    .card-btn {
+        display: block;
+        /* biar bisa di-margin auto */
+        width: fit-content;
+        /* lebar tombol sesuai isi */
+        margin: 12px auto 0 auto;
+        /* tengah horizontal */
+        background-color: #ff8c00;
+        color: white;
+        padding: 8px 16px;
+        /* jarak atas-bawah & kiri-kanan */
+        border-radius: 25px;
+        font-weight: 600;
+        font-size: 0.95rem;
+        text-align: center;
+        text-decoration: none;
+        transition: 0.2s;
+    }
+
+    .card-btn:hover {
+        background-color: #e67e00;
+    }
+
+    /* Desktop: 2 card sejajar */
+    .cards-row {
+        display: flex;
+        gap: 20px;
+        align-items: flex-start;
+        /* card menyesuaikan tinggi konten */
+    }
+
+    .cards-row .article-card {
+        flex: 1;
     }
 
     /* Tombol Chat */
@@ -158,134 +188,153 @@
         justify-content: center;
         font-size: 1.8rem;
         cursor: pointer;
-        box-shadow: 0 4px 12px rgba(0,0,0,0.2);
+        box-shadow: 0 4px 12px rgba(0, 0, 0, 0.2);
         z-index: 1000;
         transition: 0.2s ease;
     }
+
     .floating-chat-btn:hover {
         background-color: #e67e00;
         transform: scale(1.05);
     }
-/* Popup Chat */
-.chat-popup {
-    display: none;
-    flex-direction: column;
-    position: fixed;
-    bottom: 90px;
-    right: 25px;
-    width: 320px;
-    height: 420px;
-    background: #fff;
-    border-radius: 15px;
-    box-shadow: 0 5px 18px rgba(0,0,0,0.25);
-    overflow: hidden;
-    z-index: 1050;
-}
-.chat-header {
-    background: #ff8c00;
-    color: white;
-    padding: 12px 16px;
-    font-weight: 600;
-    display: flex;
-    justify-content: space-between;
-    align-items: center;
-}
-.close-btn {
-    background: none;
-    border: none;
-    color: white;
-    font-size: 1.3rem;
-    cursor: pointer;
-}
 
-/* Isi Chat */
-.chat-body {
-    flex: 1;
-    padding: 12px;
-    overflow-y: auto;
-    display: flex;
-    flex-direction: column;
-    gap: 10px;
-}
-.message {
-    padding: 10px 15px;
-    border-radius: 20px;
-    max-width: 80%;
-    font-size: 0.95rem;
-    position: relative;
-}
-.message.user {
-    background-color: #ffeed9;
-    align-self: flex-end;
-    border-bottom-right-radius: 5px;
-}
-.message.user::after {
-    content: "";
-    position: absolute;
-    right: -6px;
-    bottom: 0;
-    width: 10px;
-    height: 10px;
-    background-color: #ffeed9;
-    clip-path: polygon(0 0, 100% 100%, 0 100%);
-}
-.message.bot {
-    background-color: #f1f1f1;
-    align-self: flex-start;
-    border-bottom-left-radius: 5px;
-}
-.message.bot::after {
-    content: "";
-    position: absolute;
-    left: -6px;
-    bottom: 0;
-    width: 10px;
-    height: 10px;
-    background-color: #f1f1f1;
-    clip-path: polygon(100% 0, 100% 100%, 0 100%);
-}
+    /* Popup Chat */
+    .chat-popup {
+        display: none;
+        flex-direction: column;
+        position: fixed;
+        bottom: 90px;
+        right: 25px;
+        width: 320px;
+        height: 420px;
+        background: #fff;
+        border-radius: 15px;
+        box-shadow: 0 5px 18px rgba(0, 0, 0, 0.25);
+        overflow: hidden;
+        z-index: 1050;
+    }
 
-/* Input Pesan */
-.chat-input-area {
-    display: flex;
-    align-items: center;
-    border-top: 1px solid #eee;
-    padding: 8px;
-    background-color: #fff;
-}
-.chat-input-area input {
-    flex: 1;
-    border: none;
-    border-radius: 25px;
-    background: #f5f5f5;
-    padding: 10px 15px;
-    outline: none;
-    font-size: 0.9rem;
-    margin-right: 8px;
-}
-.chat-input-area button {
-    background-color: #ff8c00;
-    border: none;
-    border-radius: 50%;
-    color: white;
-    width: 40px;
-    height: 40px;
-    font-size: 18px;
-    cursor: pointer;
-    transition: 0.2s;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-}
-.chat-input-area button:hover {
-    background-color: #e67e00;
-}
+    .chat-header {
+        background: #ff8c00;
+        color: white;
+        padding: 12px 16px;
+        font-weight: 600;
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+    }
 
+    .close-btn {
+        background: none;
+        border: none;
+        color: white;
+        font-size: 1.3rem;
+        cursor: pointer;
+    }
+
+    .chat-body {
+        flex: 1;
+        padding: 12px;
+        overflow-y: auto;
+        display: flex;
+        flex-direction: column;
+        gap: 10px;
+    }
+
+    .message {
+        padding: 10px 15px;
+        border-radius: 20px;
+        max-width: 80%;
+        font-size: 0.95rem;
+        position: relative;
+    }
+
+    .message.user {
+        background-color: #ffeed9;
+        align-self: flex-end;
+        border-bottom-right-radius: 5px;
+    }
+
+    .message.user::after {
+        content: "";
+        position: absolute;
+        right: -6px;
+        bottom: 0;
+        width: 10px;
+        height: 10px;
+        background-color: #ffeed9;
+        clip-path: polygon(0 0, 100% 100%, 0 100%);
+    }
+
+    .message.bot {
+        background-color: #f1f1f1;
+        align-self: flex-start;
+        border-bottom-left-radius: 5px;
+    }
+
+    .message.bot::after {
+        content: "";
+        position: absolute;
+        left: -6px;
+        bottom: 0;
+        width: 10px;
+        height: 10px;
+        background-color: #f1f1f1;
+        clip-path: polygon(100% 0, 100% 100%, 0 100%);
+    }
+
+    .chat-input-area {
+        display: flex;
+        align-items: center;
+        border-top: 1px solid #eee;
+        padding: 8px;
+        background-color: #fff;
+    }
+
+    .chat-input-area input {
+        flex: 1;
+        border: none;
+        border-radius: 25px;
+        background: #f5f5f5;
+        padding: 10px 15px;
+        outline: none;
+        font-size: 0.9rem;
+        margin-right: 8px;
+    }
+
+    .chat-input-area button {
+        background-color: #ff8c00;
+        border: none;
+        border-radius: 50%;
+        color: white;
+        width: 40px;
+        height: 40px;
+        font-size: 18px;
+        cursor: pointer;
+        transition: 0.2s;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+    }
+
+    .chat-input-area button:hover {
+        background-color: #e67e00;
+    }
+
+    /* Mobile: stack */
+    @media (max-width: 768px) {
+        .cards-row {
+            flex-direction: column;
+        }
+
+        .article-card img {
+            height: auto;
+        }
+    }
 </style>
 {% endblock %}
 
 {% block content %}
-
 <!-- Hero Section -->
 <div class="container-fluid p-0">
     <div class="hero-section">
@@ -321,24 +370,49 @@
         </div>
     </div>
 
-    <!-- Artikel -->
-    <h3 class="content-title">Artikel Perbaikan Rumah</h3>
-    <div class="row justify-content-center mb-5">
-        <div class="col-md-10">
-            <div class="article-card">
-                <img src="https://www.permagard.co.uk/media/mageplaza/blog/post/blog/main_image/Crack-Stitching-Featured-Image.jpg" alt="Dinding Retak">
-                <div class="article-content">
-                    <h5>Tips Mendeteksi dan Memperbaiki Dinding Retak</h5>
-                    <p>Dinding yang retak bisa menjadi tanda masalah struktural. Retakan halus disebabkan penyusutan plester, sementara retakan besar bisa menandakan fondasi bermasalah. Gunakan mortar berkualitas dan konsultasikan dengan tukang profesional bila perlu.</p>
-                </div>
-            </div>
+    <!-- Panduan Pengguna: 2 Card Samping -->
+    <h3 class="content-title">Panduan Pengguna</h3>
+    <div class="cards-row mb-5">
+        <!-- Card 1: Cara Memesan Tukang -->
+        <div class="article-card">
+            <img src="https://testingindonesia.co.id/wp-content/uploads/2023/01/2.jpg" alt="Panduan Deteksi">
+            <div class="article-content">
+                <h5>Cara Memesan Tukang Menggunakan Fitur Deteksi</h5>
+                <p>Ikuti langkah-langkah berikut:</p>
+                <ol>
+                    <li>Buka aplikasi Teman Tukang dan pilih menu Deteksi.</li>
+                        <li>Masuk ke halaman deteksi, lalu unggah gambar kerusakan rumahmu.</li>
+                        <li>Tekan tombol Deteksi untuk memulai analisis kerusakan.</li>
+                        <li>Aplikasi akan menampilkan hasil analisis kerusakan.</li>
+                        <li>Dari hasil deteksi, aplikasi menampilkan rekomendasi tukang sesuai faktor kerusakan.</li>
+                        <li>Klik salah satu tukang untuk melihat profil dan pengalaman mereka.</li>
+                        <li>Jika sudah yakin, tekan tombol Pesan Sekarang untuk memesan tukang.</li>
+                        <li>Jika ingin konsultasi dulu, gunakan tombol Chat untuk berkomunikasi dengan tukang.</li>
 
-            <div class="article-card">
-                <img src="https://i0.wp.com/blog.kredivo.com/wp-content/uploads/2022/11/atap-bocor.jpeg?fit=1920%2C1141&ssl=1" alt="Atap Bocor">
-                <div class="article-content">
-                    <h5>Cara Menangani Atap Bocor</h5>
-                    <p>Atap bocor sering disebabkan oleh genteng bergeser, retakan kecil, atau lapisan waterproofing yang aus. Periksa sumber kebocoran secara menyeluruh, bersihkan lumut, dan aplikasikan lapisan anti bocor untuk mencegah rembesan kembali.</p>
-                </div>
+                </ol>
+                <a href="{{ url_for('deteksi') }}" class="card-btn">
+                    <i class="bi bi-search me-1"></i> Coba Deteksi Sekarang
+                </a>
+            </div>
+        </div>
+
+        <!-- Card 2: Tukang Mitra -->
+        <div class="article-card">
+            <img src="https://cloud.jpnn.com/photo/arsip/normal/2023/02/11/pt-semen-indonesia-persero-tbk-sig-menggelar-pelatihan-tata-es7i.jpg"
+                alt="Panduan Tukang">
+            <div class="article-content">
+                <h5>Cara Menjadi Tukang Mitra</h5>
+                <p>Untuk menjadi tukang mitra:</p>
+                <ol>
+                    <li>Hubungi tim kami via WhatsApp untuk verifikasi data.</li>
+                    <li>Setelah dikonfirmasi, akun akan dibuat di aplikasi Mitra Teman Tukang.</li>
+                    <li>Login menggunakan email atau nomor telepon.</li>
+                    <li>Lengkapi profil, termasuk skill dan layanan.</li>
+                    <li>Mulai menerima pesanan dan kelola pekerjaan dari aplikasi.</li>
+                </ol>
+                <a href="https://wa.me/6281234567890" target="_blank" class="card-btn">
+                    <i class="bi bi-whatsapp me-1"></i> Hubungi via WA
+                </a>
             </div>
         </div>
     </div>
@@ -395,5 +469,4 @@
         }
     };
 </script>
-
 {% endblock %}

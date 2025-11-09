@@ -55,17 +55,14 @@ def register():
         email = request.form.get('email')
         password = request.form.get('password')
 
-        # ✅ CEK FORM KOSONG
         if not username or not email or not password:
             flash("Semua form harus diisi!", "danger")
             return redirect(url_for('register'))
 
-        # ✅ CEK MINIMAL PASSWORD 6 KARAKTER
         if len(password) < 6:
             flash("Password minimal 6 karakter!", "danger")
             return redirect(url_for('register'))
 
-        # ✅ SIMPAN DATA USER (SIMULASI, TANPA DATABASE)
         registered_users.append({
             "username": username,
             "email": email,
@@ -184,14 +181,6 @@ def profil_user():
         "alamat": "Jl. Merdeka No. 10, Semarang"
     }
     return render_template("profil_user.html", customer=customer)
-
-@app.route("/profil_edit", methods=["GET", "POST"])
-def profil_edit():
-    if request.method == "POST":
-        flash("Profil berhasil diperbarui!")
-        return redirect(url_for("profil_edit"))
-
-    return render_template("profil_edit.html", active_page="profil_edit")
 
 @app.route("/notifikasi")
 def notifikasi():

@@ -8,29 +8,29 @@
         justify-content: center;
         align-items: center;
         min-height: 90vh;
-        margin-top: -20px; /* Naikin posisi card sedikit */
+        margin-top: -20px;
     }
 
     .review-box {
         width: 100%;
-        max-width: 720px; /* ⬅️ Card lebih lebar */
+        max-width: 720px;
         background: white;
         padding: 35px 45px;
         border-radius: 14px;
         box-shadow: 0 5px 18px rgba(0,0,0,0.08);
         text-align: center;
-        transform: scale(0.95); /* ⬅️ Kecilkan tampilan keseluruhan */
+        transform: scale(0.95);
     }
 
     .review-title {
-        font-size: 1.6rem; /* ⬅️ Lebih kecil dari sebelumnya */
+        font-size: 1.6rem;
         font-weight: 600;
         color: #333;
         margin-bottom: 20px;
     }
 
     .rating-stars i {
-        font-size: 1.9rem; /* ⬅️ Kecilkan bintang */
+        font-size: 1.9rem;
         color: #ccc;
         cursor: pointer;
         margin: 0 3px;
@@ -48,19 +48,24 @@
         border-radius: 10px;
         padding: 12px;
         resize: vertical;
-        font-size: 0.95rem; /* ⬅️ Font lebih kecil */
+        font-size: 0.95rem;
         color: #333;
         margin-top: 12px;
     }
 
+    /* Tombol Kirim diperlebar */
     .btn-orange {
+        display: block;
+        width: 100%; /* full-width */
+        max-width: 100%;
+        margin: 0 auto;
         background-color: #ff8c00;
         border: none;
-        padding: 8px 28px; /* ⬅️ Lebih ramping */
+        padding: 12px 0; /* tinggi tombol sedikit lebih besar */
         border-radius: 8px;
         color: white;
         font-weight: 600;
-        font-size: 0.95rem;
+        font-size: 1rem;
         transition: 0.2s;
     }
 
@@ -84,7 +89,6 @@
 {% block content %}
 <div class="container review-container">
     <div class="review-box">
-
         <form method="POST" action="{{ url_for('tulis_ulasan', order_id=order_id) }}">
             <h2 class="review-title">Beri Rating & Ulasan</h2>
             <p class="mb-2" style="color:#555; font-size:0.95rem;">Penilaian Anda untuk tukang ini</p>
@@ -105,7 +109,6 @@
                 <button class="btn-orange" type="submit">Kirim</button>
             </div>
         </form>
-
     </div>
 </div>
 
