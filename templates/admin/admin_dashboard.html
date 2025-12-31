@@ -189,9 +189,11 @@
             <i class="fas fa-tools"></i> Admin Teman Tukang
         </div>
         <a href="/admin"><i class="fas fa-tachometer-alt"></i> Dashboard</a>
-        <a href="/admin/tukang"><i class="fas fa-user-cog"></i> Kelola Tukang</a>
-        <a href="/admin/customers"><i class="fas fa-users"></i> Kelola Customer</a>
-        <a href="/admin/review"><i class="fas fa-comments"></i> Review Tukang</a>
+        <a href="/admin/akun_tukang"><i class="fas fa-user-cog"></i> Kelola Tukang</a>
+        <a href="/admin/customers"><i class="fas fa-user-friends"></i> Kelola Customer</a>
+        <a href="/admin/tukang"><i class="fas fa-id-card"></i> Detail Tukang</a>
+        <a href="/admin/pesanan"><i class="fas fa-clipboard-list"></i> Kelola Pesanan</a>
+        <a href="/admin/review"><i class="fas fa-star"></i> Review Tukang</a>
     </div>
 
     <div class="navbar">
@@ -216,8 +218,8 @@
 
         <div class="cards">
             <div class="card">
-                <div class="card-title">Total Tukang</div>
-                <div class="card-value">{{ total_tukang }}</div>
+                <div class="card-title">Total tukang</div>
+                <div class="card-value">{{ total_akun_tukang }}</div>
             </div>
             <div class="card">
                 <div class="card-title">Total Customer</div>
@@ -248,7 +250,7 @@
 
     <script>
         /* CHART */
-        const tukang = Number("{{ total_tukang | default(0) }}"); const customer = Number("{{ total_customer | default(0) }}");
+        const tukang = Number("{{ total_akun_tukang | default(0) }}"); const customer = Number("{{ total_customer | default(0) }}");
 
         new Chart(barChart, {
             type: 'bar',

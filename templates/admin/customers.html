@@ -155,39 +155,49 @@
         .btn-add:hover {
             background: var(--hover);
         }
+/* TABLE */
+.table-box {
+    background: white;
+    border-radius: 10px;
+    box-shadow: 0 0.15rem 1.75rem rgba(58, 59, 69, .15);
 
-        /* TABLE */
-        .table-box {
-            background: white;
-            border-radius: 10px;
-            box-shadow: 0 0.15rem 1.75rem rgba(58, 59, 69, .15);
-            overflow: hidden;
-        }
+    /* biar bisa scroll */
+    overflow-x: auto;
+    overflow-y: auto;
 
-        table {
-            width: 100%;
-            border-collapse: collapse;
-        }
+    /* tinggi maksimal tabel (scroll ke bawah) */
+    max-height: 520px;
+}
 
-        th {
-            background: var(--main);
-            padding: 14px;
-            color: white;
-            font-size: 14px;
-            text-align: left;
-        }
+table {
+    width: 100%;
+    border-collapse: collapse;
+    min-width: 900px; /* supaya bisa geser kanan-kiri kalau layar kecil */
+}
 
-        td {
-            padding: 14px;
-            border-bottom: 1px solid #eee;
-            font-size: 14px;
-            color: var(--text);
-            vertical-align: middle;
-        }
+th {
+    background: var(--main);
+    padding: 14px;
+    color: white;
+    font-size: 14px;
+    text-align: left;
+    position: sticky;
+    top: 0;              /* header tetap saat scroll */
+    z-index: 2;
+}
 
-        tr:hover {
-            background: #fff7ec;
-        }
+td {
+    padding: 14px;
+    border-bottom: 1px solid #eee;
+    font-size: 14px;
+    color: var(--text);
+    vertical-align: middle;
+    white-space: nowrap; /* biar kolom ga pecah */
+}
+
+tr:hover {
+    background: #fff7ec;
+}
 
         /* ACTION */
         .action-btns {
@@ -224,11 +234,12 @@
         <div class="sidebar-header">
             <i class="fas fa-tools"></i> Admin Teman Tukang
         </div>
-
         <a href="/admin"><i class="fas fa-tachometer-alt"></i> Dashboard</a>
-        <a href="/admin/tukang"><i class="fas fa-user-cog"></i> Kelola Tukang</a>
-        <a href="/admin/customers"><i class="fas fa-users"></i> Kelola Customer</a>
-        <a href="/admin/review"><i class="fas fa-comments"></i> Review Tukang</a>
+        <a href="/admin/akun_tukang"><i class="fas fa-user-cog"></i> Kelola Tukang</a>
+        <a href="/admin/customers"><i class="fas fa-user-friends"></i> Kelola Customer</a>
+        <a href="/admin/tukang"><i class="fas fa-id-card"></i> Detail Tukang</a>
+        <a href="/admin/pesanan"><i class="fas fa-clipboard-list"></i> Kelola Pesanan</a>
+        <a href="/admin/review"><i class="fas fa-star"></i> Review Tukang</a>
     </div>
 
     <div class="navbar">
@@ -259,7 +270,7 @@
             </a>
         </div>
 
-        <div class="table-box">
+        <div class="table-box table-scroll">
             <table>
                 <tr>
                     <th>No</th>

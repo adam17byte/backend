@@ -3,7 +3,7 @@
 
 <head>
     <meta charset="UTF-8">
-    <title>Review Tukang - Admin Teman Tukang</title>
+    <title>Kelola Tukang - Admin Teman Tukang</title>
 
     <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css" rel="stylesheet">
 
@@ -90,13 +90,6 @@
             cursor: pointer;
         }
 
-        .nav-right {
-            display: flex;
-            align-items: center;
-            gap: 12px;
-            color: var(--text);
-        }
-
         /* PROFILE */
         .profile-menu {
             position: relative;
@@ -104,6 +97,7 @@
             align-items: center;
             gap: 8px;
             cursor: pointer;
+            color: var(--text);
         }
 
         .profile-dropdown {
@@ -115,8 +109,6 @@
             box-shadow: 0 4px 12px rgba(0, 0, 0, .15);
             width: 150px;
             display: none;
-            overflow: hidden;
-            z-index: 99;
         }
 
         .profile-dropdown a {
@@ -124,9 +116,8 @@
             align-items: center;
             gap: 10px;
             padding: 12px 16px;
-            color: #5a5c69;
             text-decoration: none;
-            font-size: 14px;
+            color: #5a5c69;
         }
 
         .profile-dropdown a:hover {
@@ -139,11 +130,30 @@
             padding: 100px 30px 30px;
         }
 
+        .page-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 25px;
+        }
+
         .page-title {
             font-size: 26px;
             font-weight: 700;
             color: var(--text);
-            margin-bottom: 25px;
+        }
+
+        .btn-add {
+            background: var(--main);
+            padding: 10px 18px;
+            color: white;
+            border-radius: 6px;
+            text-decoration: none;
+            font-size: 14px;
+        }
+
+        .btn-add:hover {
+            background: var(--hover);
         }
 
         /* TABLE */
@@ -157,44 +167,53 @@
         table {
             width: 100%;
             border-collapse: collapse;
-            font-size: 14px;
         }
 
         th {
             background: var(--main);
             padding: 14px;
             color: white;
+            font-size: 14px;
             text-align: left;
         }
 
         td {
             padding: 14px;
             border-bottom: 1px solid #eee;
+            font-size: 14px;
             color: var(--text);
+            vertical-align: middle;
         }
 
-        tbody tr:hover {
+        tr:hover {
             background: #fff7ec;
         }
 
-        .badge {
-            padding: 4px 12px;
-            border-radius: 20px;
-            font-size: 12px;
-            font-weight: 600;
+        /* ACTION */
+        .action-btns {
+            display: flex;
+            gap: 8px;
+        }
+
+        .btn-edit,
+        .btn-delete {
+            padding: 6px 12px;
+            border-radius: 4px;
+            font-size: 13px;
+            text-decoration: none;
             color: white;
+            display: flex;
+            align-items: center;
+            gap: 5px;
+            white-space: nowrap;
         }
 
-        .badge-positif {
-            background: #1cc88a;
+        .btn-edit {
+            background: #3498db;
         }
 
-        .badge-negatif {
+        .btn-delete {
             background: #e74c3c;
-        }
-
-        .star {
-            color: #ff9800;
         }
     </style>
 </head>
@@ -215,74 +234,66 @@
 
     <div class="navbar">
         <div class="search-box">
-            <input type="text" id="searchInput" placeholder="Search review...">
+            <input type="text" placeholder="Search for...">
             <button><i class="fas fa-search"></i></button>
         </div>
 
-        <div class="nav-right">
-            <div class="profile-menu">
-                <i class="fas fa-user-circle"></i>
-                <span>{{ session.get('username', 'Admin') }}</span>
-                <i class="fas fa-caret-down"></i>
+        <div class="profile-menu">
+            <i class="fas fa-user-circle"></i>
+            <span>{{ session.get('username','Admin') }}</span>
+            <i class="fas fa-caret-down"></i>
 
-                <div class="profile-dropdown">
-                    <a href="/logout">
-                        <i class="fas fa-sign-out-alt"></i> Logout
-                    </a>
-                </div>
+            <div class="profile-dropdown">
+                <a href="/logout">
+                    <i class="fas fa-sign-out-alt"></i> Logout
+                </a>
             </div>
         </div>
+
     </div>
 
     <div class="content">
-        <div class="page-title">Review Tukang</div>
+        <div class="page-header">
+            <div class="page-title">Kelola Tukang</div>
+            <a href="/admin/akun_tukang/add" class="btn-add">
+                <i class="fas fa-plus"></i> Tambah Tukang
+            </a>
+        </div>
 
         <div class="table-box">
-            <table id="reviewTable">
-                <thead>
-                    <tr>
-                        <th>Customer</th>
-                        <th>Tukang</th>
-                        <th>Rating</th>
-                        <th>Ulasan</th>
-                        <th>Sentimen</th>
-                        <th>Tanggal</th>
-                    </tr>
-                </thead>
-                <tbody>
-                    {% for r in reviews %}
-                    <tr>
-                        <td>{{ r.customer }}</td>
-                        <td>{{ r.tukang }}</td>
-                        <td>{{ r.rating }} <i class="fas fa-star star"></i></td>
-                        <td>{{ r.review_text }}</td>
-                        <td>
-                            {% if r.sentiment == 'positif' %}
-                            <span class="badge badge-positif">Positif</span>
-                            {% else %}
-                            <span class="badge badge-negatif">Negatif</span>
-                            {% endif %}
-                        </td>
-                        <td>{{ r.tanggal }}</td>
-                    </tr>
-                    {% endfor %}
-                </tbody>
+            <table>
+                <tr>
+                    <th>No</th>
+                    <th>Nama</th>
+                    <th>Email</th>
+                    <th>Password</th>
+                    <th>Aksi</th>
+                </tr>
+
+                {% for c in akun_tukang %}
+                <tr>
+                    <td>{{ loop.index }}</td>
+                    <td>{{ c.username }}</td>
+                    <td>{{ c.email }}</td>
+                    <td>{{ c.password }}</td>
+                    <td>
+                        <div class="action-btns">
+                            <a class="btn-edit" href="/admin/akun_tukang/edit/{{ c.id_users }}">
+                                <i class="fas fa-edit"></i> Edit
+                            </a>
+                            <a class="btn-delete" href="/admin/akun_tukang/delete/{{ c.id_users }}"
+                                onclick="return confirm('Hapus tukang ini?')">
+                                <i class="fas fa-trash"></i> Hapus
+                            </a>
+                        </div>
+                    </td>
+                </tr>
+                {% endfor %}
             </table>
         </div>
     </div>
 
     <script>
-        /* SEARCH */
-        document.getElementById("searchInput").addEventListener("keyup", function () {
-            const value = this.value.toLowerCase();
-            const rows = document.querySelectorAll("#reviewTable tbody tr");
-
-            rows.forEach(row => {
-                row.style.display = row.innerText.toLowerCase().includes(value) ? "" : "none";
-            });
-        });
-
-        /* PROFILE DROPDOWN */
         const profileMenu = document.querySelector('.profile-menu');
         const dropdown = document.querySelector('.profile-dropdown');
 
