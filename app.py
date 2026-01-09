@@ -324,21 +324,9 @@ def log_request():
         print("BODY:", request.get_data())
 
 if __name__ == "__main__":
-    # Jawaban atas error code block (971-1006):
-    # Kalau error/warning terkait socketio,
-    # 1. Pastikan instance `socketio` hanya dibuat sekali dan tidak dibuat ulang di file ini (app.py) dan sudah di-import dari extensions.py.
-    # 2. Pastikan event handler untuk socketio (misal di socket_chat.py) sudah didekorasikan memakai instance socketio yang SAMA dengan yang dijalankan di file ini.
-    # 3. Kalau warning atau error seperti "Not running with the Werkzeug Server" atau "No eventlet/asyncio" atau ganda-deklarasi Flask/Socketio, itu kemungkinan karena instance berbeda/berbeda panggilan.
-    # 4. File extensions.py harus berisi sesuatu seperti:
-    #       from flask_socketio import SocketIO
-    #       socketio = SocketIO(cors_allowed_origins="*")
-    #    lalu import dan panggil socketio.init_app(app) di file ini SETELAH app dibuat.
-    #
-    # Ubah jadi:
     socketio.init_app(app)
     socketio.run(
         app,
         host="0.0.0.0",
-        port=5000,
-        debug=True
+        port=5000
     )
