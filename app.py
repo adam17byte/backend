@@ -4,15 +4,19 @@ from flask import (
 )
 from flask_cors import CORS
 from flask_jwt_extended import JWTManager
+
 from db import db, cursor
 from api import api
-
+from extensions import socketio  # Pastikan ada file extensions.py yang mendefinisikan socketio
+# import socket_chat  # noqa
 app = Flask(__name__)
 app.config['SECRET_KEY'] = 'kunci-rahasia-teman-tukang-yang-kuat'
 app.config['JWT_SECRET_KEY'] = 'jwt-rahasia-teman-tukang'
 
 CORS(app)
 JWTManager(app)
+socketio.init_app(app)
+import socket_chat
 app.register_blueprint(api)
 
 class Admin:
@@ -320,4 +324,21 @@ def log_request():
         print("BODY:", request.get_data())
 
 if __name__ == "__main__":
-    app.run(host="0.0.0.0", port=5000, debug=True)
+    # Jawaban atas error code block (971-1006):
+    # Kalau error/warning terkait socketio,
+    # 1. Pastikan instance `socketio` hanya dibuat sekali dan tidak dibuat ulang di file ini (app.py) dan sudah di-import dari extensions.py.
+    # 2. Pastikan event handler untuk socketio (misal di socket_chat.py) sudah didekorasikan memakai instance socketio yang SAMA dengan yang dijalankan di file ini.
+    # 3. Kalau warning atau error seperti "Not running with the Werkzeug Server" atau "No eventlet/asyncio" atau ganda-deklarasi Flask/Socketio, itu kemungkinan karena instance berbeda/berbeda panggilan.
+    # 4. File extensions.py harus berisi sesuatu seperti:
+    #       from flask_socketio import SocketIO
+    #       socketio = SocketIO(cors_allowed_origins="*")
+    #    lalu import dan panggil socketio.init_app(app) di file ini SETELAH app dibuat.
+    #
+    # Ubah jadi:
+    socketio.init_app(app)
+    socketio.run(
+        app,
+        host="0.0.0.0",
+        port=5000,
+        debug=True
+    )
