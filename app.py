@@ -324,9 +324,10 @@ def log_request():
         print("BODY:", request.get_data())
 
 if __name__ == "__main__":
-    socketio.init_app(app)
+    
     socketio.run(
-        app,
-        host="0.0.0.0",
-        port=5000
-    )
+    app,
+    host="::",
+    port=5000
+)
+
