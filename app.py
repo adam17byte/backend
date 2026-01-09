@@ -15,7 +15,7 @@ app.config['JWT_SECRET_KEY'] = 'jwt-rahasia-teman-tukang'
 
 CORS(app)
 JWTManager(app)
-socketio.init_app(app)
+# socketio.init_app(app)
 import socket_chat
 app.register_blueprint(api)
 
