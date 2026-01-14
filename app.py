@@ -5,21 +5,6 @@ from flask import (
 from flask_cors import CORS
 from flask_jwt_extended import JWTManager
 
-<<<<<<< HEAD
-from db import db, cursor
-from api import api
-from extensions import socketio  # Pastikan ada file extensions.py yang mendefinisikan socketio
-# import socket_chat  # noqa
-app = Flask(__name__)
-app.config['SECRET_KEY'] = 'kunci-rahasia-teman-tukang-yang-kuat'
-app.config['JWT_SECRET_KEY'] = 'jwt-rahasia-teman-tukang'
-
-CORS(app)
-JWTManager(app)
-# socketio.init_app(app)
-import socket_chat
-app.register_blueprint(api)
-=======
 from flask_socketio import SocketIO
 from extensions import limiter
 from datetime import timedelta
@@ -116,7 +101,6 @@ def log_response(response):
             request.remote_addr
         )
     return response
->>>>>>> 8d9d115 (api/utils)
 
 class Admin:
     def __init__(self, db_cursor):
@@ -154,14 +138,35 @@ class Admin:
             "avg_rating": avg_rating,
             "rating_counts": rating_counts
         }
+    def pesanan_dashboard(self):
+        self.cursor.execute("""
+        SELECT
+            COUNT(*) AS total,
+            SUM(status='menunggu_konfirmasi') AS menunggu,
+            SUM(status='diterima') AS diterima,
+            SUM(status='selesai') AS selesai,
+            SUM(status='ditolak') AS ditolak
+        FROM pesanan
+        """)
+        return self.cursor.fetchone()
 
 class KelolaTukang:
     def __init__(self, db_cursor):
         self.cursor = db_cursor
 
-    def list_akun(self):
-        self.cursor.execute("SELECT * FROM users WHERE role='tukang'")
+    def list_akun(self, keyword=None):
+        if keyword:
+            self.cursor.execute("""
+                SELECT * FROM users 
+                WHERE role='tukang'
+                AND (username LIKE %s OR email LIKE %s)
+            """, (f"%{keyword}%", f"%{keyword}%"))
+        else:
+            self.cursor.execute(
+                "SELECT * FROM users WHERE role='tukang'"
+            )
         return self.cursor.fetchall()
+
 
     def add_akun(self, username, email, password):
         self.cursor.execute(
@@ -185,8 +190,15 @@ class Customer:
     def __init__(self, db_cursor):
         self.cursor = db_cursor
 
-    def list_customers(self):
-        self.cursor.execute("SELECT * FROM users WHERE role='customer'")
+    def list_customers(self, keyword=None):
+        if keyword:
+            self.cursor.execute("""
+            SELECT * FROM users
+            WHERE role='customer'
+            AND (username LIKE %s OR email LIKE %s)
+        """, (f"%{keyword}%", f"%{keyword}%"))
+        else:
+            self.cursor.execute("SELECT * FROM users WHERE role='customer'")
         return self.cursor.fetchall()
 
     def add_customer(self, username, email, password):
@@ -211,31 +223,42 @@ class DetailTukang:
     def __init__(self, db_cursor):
         self.cursor = db_cursor
 
-    def list_tukang(self):
-        self.cursor.execute("SELECT * FROM tukang")
+    def list_tukang(self, keyword=None):
+        if keyword:
+            self.cursor.execute("""
+            SELECT * FROM tukang
+            WHERE nama LIKE %s OR keahlian LIKE %s
+        """, (f"%{keyword}%", f"%{keyword}%"))
+        else:
+            self.cursor.execute("SELECT * FROM tukang")
         return self.cursor.fetchall()
 
-    def add_tukang(self, nama, keahlian, pengalaman, foto):
-        self.cursor.execute("INSERT INTO users (username, role) VALUES (%s,'tukang')", (nama,))
-        db.commit()
-        id_users = self.cursor.lastrowid
+
+    def add_tukang(self, id_users, nama, keahlian, pengalaman, foto):
         self.cursor.execute(
-            "INSERT INTO tukang (id_users,nama,keahlian,pengalaman,foto) VALUES (%s,%s,%s,%s,%s)",
+            """
+            INSERT INTO tukang 
             (id_users, nama, keahlian, pengalaman, foto)
-        )
+            VALUES (%s,%s,%s,%s,%s)
+            """,
+            (id_users, nama, keahlian, pengalaman, foto)
+    )
         db.commit()
 
-    def edit_tukang(self, id_tukang, nama, keahlian, pengalaman, foto):
-        self.cursor.execute(
-            "UPDATE tukang SET nama=%s, keahlian=%s, pengalaman=%s, foto=%s WHERE id_tukang=%s",
-            (nama, keahlian, pengalaman, foto, id_tukang)
-        )
+
+    def edit_tukang(self, id, nama, keahlian, pengalaman, foto):
+        self.cursor.execute("""
+        UPDATE tukang SET
+        nama=%s,
+        keahlian=%s,
+        pengalaman=%s,
+        foto=%s
+        WHERE id_tukang=%s
+    """, (nama, keahlian, pengalaman, foto, id))
         db.commit()
 
     def delete_tukang(self, id_tukang):
-        self.cursor.execute("SELECT id_users FROM tukang WHERE id_tukang=%s", (id_tukang,))
-        data = self.cursor.fetchone()
-        self.cursor.execute("DELETE FROM users WHERE id_users=%s", (data['id_users'],))
+        self.cursor.execute("DELETE FROM tukang WHERE id_tukang=%s", (id_tukang,))
         db.commit()
 
 class Review:
@@ -252,6 +275,79 @@ class Review:
             ORDER BY r.tanggal DESC
         """)
         return self.cursor.fetchall()
+    
+class KelolaPesanan:
+    def __init__(self, db_cursor):
+        self.cursor = db_cursor
+
+    def list_pesanan(self, keyword=None):
+        if keyword:
+            self.cursor.execute("""
+                SELECT
+                    p.id_pesanan,
+                    u.username AS customer,
+                    t.nama AS tukang,
+                    p.tanggal_pengerjaan,
+                    p.harga_per_hari,
+                    p.status,
+                    p.metode_pembayaran,
+                    p.status_pembayaran,
+                    p.created_at
+                FROM pesanan p
+                JOIN users u ON p.user_id = u.id_users
+                JOIN tukang t ON p.tukang_id = t.id_tukang
+                WHERE
+                    u.username LIKE %s OR
+                    t.nama LIKE %s OR
+                    p.status LIKE %s
+                ORDER BY p.created_at DESC
+            """, (f"%{keyword}%", f"%{keyword}%", f"%{keyword}%"))
+        else:
+            self.cursor.execute("""
+                SELECT
+                    p.id_pesanan,
+                    u.username AS customer,
+                    t.nama AS tukang,
+                    p.tanggal_pengerjaan,
+                    p.harga_per_hari,
+                    p.status,
+                    p.metode_pembayaran,
+                    p.status_pembayaran,
+                    p.created_at
+                FROM pesanan p
+                JOIN users u ON p.user_id = u.id_users
+                JOIN tukang t ON p.tukang_id = t.id_tukang
+                ORDER BY p.created_at DESC
+            """)
+        return self.cursor.fetchall()
+
+    def detail_pesanan(self, id_pesanan):
+        self.cursor.execute("""
+            SELECT
+                p.id_pesanan,
+                p.alamat,
+                p.tanggal_pengerjaan,
+                p.harga_per_hari,
+                p.status,
+                p.metode_pembayaran,
+                p.status_pembayaran,
+                p.bukti_pembayaran,
+                u.username AS customer,
+                t.nama AS tukang
+            FROM pesanan p
+            JOIN users u ON p.user_id = u.id_users
+            JOIN tukang t ON p.tukang_id = t.id_tukang
+            WHERE p.id_pesanan=%s
+        """, (id_pesanan,))
+        return self.cursor.fetchone()
+
+    def verifikasi_pembayaran(self, id_pesanan, status):
+        self.cursor.execute("""
+            UPDATE pesanan
+            SET status_pembayaran=%s
+            WHERE id_pesanan=%s
+        """, (status, id_pesanan))
+        db.commit()
 
 class WebPromosi:
     def index(self):
@@ -262,6 +358,7 @@ tukang_obj = KelolaTukang(cursor)
 customer_obj = Customer(cursor)
 detail_tukang_obj = DetailTukang(cursor)
 review_obj = Review(cursor)
+pesanan_obj = KelolaPesanan(cursor)
 web_promosi = WebPromosi()
 
 # ROUTES
@@ -292,21 +389,34 @@ def admin_dashboard_route():
     if 'user_role' not in session or session['user_role'] != 'admin':
         flash("Akses ditolak!", "danger")
         return redirect(url_for('login_admin_route'))
+
     data = admin_obj.dashboard_data()
-    return render_template('admin/admin_dashboard.html',
-                           total_akun_tukang=data['total_akun_tukang'],
-                           total_customer=data['total_customer'],
-                           avg_rating=data['avg_rating'],
-                           rating_1=data['rating_counts'][1],
-                           rating_2=data['rating_counts'][2],
-                           rating_3=data['rating_counts'][3],
-                           rating_4=data['rating_counts'][4],
-                           rating_5=data['rating_counts'][5])
+    pesanan = admin_obj.pesanan_dashboard()  # ⬅ TAMBAH INI
+
+    return render_template(
+        'admin/admin_dashboard.html',
+        total_akun_tukang=data['total_akun_tukang'],
+        total_customer=data['total_customer'],
+        avg_rating=data['avg_rating'],
+        rating_1=data['rating_counts'][1],
+        rating_2=data['rating_counts'][2],
+        rating_3=data['rating_counts'][3],
+        rating_4=data['rating_counts'][4],
+        rating_5=data['rating_counts'][5],
+
+        # ⬇⬇ DATA PESANAN
+        total_pesanan=pesanan['total'],
+        pesanan_menunggu=pesanan['menunggu'],
+        pesanan_diterima=pesanan['diterima'],
+        pesanan_selesai=pesanan['selesai'],
+        pesanan_ditolak=pesanan['ditolak']
+    )
 
 # Kelola Tukang
 @app.route('/admin/akun_tukang')
 def list_akun_tukang_route():
-    akun_tukang = tukang_obj.list_akun()
+    keyword = request.args.get('q')
+    akun_tukang = tukang_obj.list_akun(keyword)
     return render_template('admin/akun_tukang.html', akun_tukang=akun_tukang)
 
 @app.route('/admin/akun_tukang/add', methods=['GET','POST'])
@@ -339,8 +449,10 @@ def delete_akun_tukang_route(id):
 # Customer
 @app.route('/admin/customers')
 def list_customers_route():
-    customers = customer_obj.list_customers()
+    keyword = request.args.get('q')
+    customers = customer_obj.list_customers(keyword)
     return render_template('admin/customers.html', customers=customers)
+
 
 @app.route('/admin/customers/add', methods=['GET','POST'])
 def add_customer_route():
@@ -371,32 +483,69 @@ def delete_customer_route(id):
 # Detail Tukang
 @app.route('/admin/tukang')
 def list_detail_tukang_route():
-    tukang = detail_tukang_obj.list_tukang()
+    keyword = request.args.get('keyword')  
+    tukang = detail_tukang_obj.list_tukang(keyword)
     return render_template('admin/tukang.html', tukang=tukang)
 
-@app.route('/admin/tukang/add', methods=['GET','POST'])
-def add_detail_tukang_route():
+@app.route('/admin/tukang/add', methods=['GET', 'POST'])
+def tambah_tukang():
     if request.method == 'POST':
-        detail_tukang_obj.add_tukang(
-            request.form['nama'], request.form['keahlian'],
-            request.form['pengalaman'], request.form['foto']
-        )
-        flash("Tukang berhasil ditambahkan", "success")
-        return redirect(url_for('list_detail_tukang_route'))
-    return render_template('admin/add_tukang.html')
 
-@app.route('/admin/tukang/edit/<int:id>', methods=['GET','POST'])
-def edit_detail_tukang_route(id):
+        foto = request.files.get('foto')
+        if not foto or foto.filename == '':
+            flash("Foto wajib diupload", "danger")
+            return redirect(request.url)
+
+        id_users = request.form['id_users']
+        nama = request.form['nama']
+        keahlian = request.form['keahlian']
+        pengalaman = request.form['pengalaman']
+
+        filename = secure_filename(foto.filename)
+        foto.save(os.path.join(app.config['UPLOAD_FOLDER'], filename))
+
+        detail_tukang_obj.add_tukang(
+        id_users, nama, keahlian, pengalaman, filename
+    )
+
+        flash("Tukang berhasil ditambahkan", "success")
+        return redirect('/admin/tukang')
+
+    # GET
+    cursor.execute("SELECT id_users, username FROM users WHERE role='tukang'")
+    akun_tukang = cursor.fetchall()
+    return render_template('admin/add_tukang.html', akun_tukang=akun_tukang)
+
+@app.route("/admin/tukang/edit/<int:id>", methods=["GET", "POST"])
+def edit_tukang(id):
     cursor.execute("SELECT * FROM tukang WHERE id_tukang=%s", (id,))
     t = cursor.fetchone()
-    if request.method == 'POST':
+
+    if not t:
+        flash("Data tukang tidak ditemukan", "danger")
+        return redirect("/admin/tukang")
+
+    if request.method == "POST":
+        nama = request.form['nama']
+        keahlian = request.form['keahlian']
+        pengalaman = request.form['pengalaman']
+
+        foto = request.files.get('foto')
+
+        if foto and foto.filename != '':
+            filename = secure_filename(foto.filename)
+            foto.save(os.path.join(app.config['UPLOAD_FOLDER'], filename))
+        else:
+            filename = t['foto']
+
         detail_tukang_obj.edit_tukang(
-            id, request.form['nama'], request.form['keahlian'],
-            request.form['pengalaman'], request.form['foto']
+            id, nama, keahlian, pengalaman, filename
         )
-        flash("Tukang berhasil diupdate", "success")
-        return redirect(url_for('list_detail_tukang_route'))
-    return render_template('admin/edit_tukang.html', t=t)
+
+        flash("Data tukang berhasil diperbarui", "success")
+        return redirect("/admin/tukang")
+
+    return render_template("admin/edit_tukang.html", t=t)
 
 @app.route('/admin/tukang/delete/<int:id>')
 def delete_detail_tukang_route(id):
@@ -407,8 +556,73 @@ def delete_detail_tukang_route(id):
 # Review
 @app.route('/admin/review')
 def list_review_route():
-    reviews = review_obj.list_review()
-    return render_template('admin/review.html', reviews=reviews)
+    keyword = request.args.get('q', '').strip()  
+    if keyword:
+        cursor.execute("""
+            SELECT r.review_text, r.rating, r.sentiment, r.tanggal,
+                   u.username AS customer, t.nama AS tukang
+            FROM review r
+            JOIN users u ON r.user_id = u.id_users
+            JOIN tukang t ON r.tukang_id = t.id_tukang
+            WHERE r.review_text LIKE %s
+               OR u.username LIKE %s
+               OR t.nama LIKE %s
+            ORDER BY r.tanggal DESC
+        """, (f"%{keyword}%", f"%{keyword}%", f"%{keyword}%"))
+    else:
+        cursor.execute("""
+            SELECT r.review_text, r.rating, r.sentiment, r.tanggal,
+                   u.username AS customer, t.nama AS tukang
+            FROM review r
+            JOIN users u ON r.user_id = u.id_users
+            JOIN tukang t ON r.tukang_id = t.id_tukang
+            ORDER BY r.tanggal DESC
+        """)
+    reviews = cursor.fetchall()
+    return render_template('admin/review.html', reviews=reviews, keyword=keyword)
+
+# KelolaPesanan
+@app.route('/admin/pesanan')
+def admin_pesanan_route():
+    if 'user_role' not in session or session['user_role'] != 'admin':
+        flash("Akses ditolak!", "danger")
+        return redirect(url_for('login_admin_route'))
+
+    keyword = request.args.get('q')
+    pesanan = pesanan_obj.list_pesanan(keyword)
+
+    return render_template(
+        'admin/kelola_pesanan.html',
+        pesanan=pesanan
+    )
+
+@app.route('/admin/pesanan/<int:id>')
+def admin_detail_pesanan_route(id):
+    if 'user_role' not in session or session['user_role'] != 'admin':
+        flash("Akses ditolak!", "danger")
+        return redirect(url_for('login_admin_route'))
+
+    data = pesanan_obj.detail_pesanan(id)
+    if not data:
+        flash("Pesanan tidak ditemukan", "danger")
+        return redirect(url_for('admin_pesanan_route'))
+
+    return render_template(
+        'admin/detail_pesanan.html',
+        pesanan=data
+    )
+@app.route('/admin/pesanan/verifikasi/<int:id>', methods=['POST'])
+def verifikasi_pembayaran_route(id):
+    if 'user_role' not in session or session['user_role'] != 'admin':
+        flash("Akses ditolak!", "danger")
+        return redirect(url_for('login_admin_route'))
+
+    status = request.form['status_pembayaran']
+
+    pesanan_obj.verifikasi_pembayaran(id, status)
+
+    flash("Status pembayaran diperbarui", "success")
+    return redirect(url_for('admin_detail_pesanan_route', id=id))
 
 # WebPromosi
 @app.route('/')
@@ -423,5 +637,5 @@ def log_request():
         print("BODY:", request.get_data())
 
 if __name__ == "__main__":
-    print("APP STARTING...")
-    app.run(host="0.0.0.0", port=5000)
+    socketio.run(app, host="0.0.0.0", port=5000, debug=True)
+
