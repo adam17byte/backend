@@ -5,6 +5,7 @@ from flask import (
 from flask_cors import CORS
 from flask_jwt_extended import JWTManager
 
+<<<<<<< HEAD
 from db import db, cursor
 from api import api
 from extensions import socketio  # Pastikan ada file extensions.py yang mendefinisikan socketio
@@ -18,6 +19,104 @@ JWTManager(app)
 # socketio.init_app(app)
 import socket_chat
 app.register_blueprint(api)
+=======
+from flask_socketio import SocketIO
+from extensions import limiter
+from datetime import timedelta
+from time import time
+import logging
+import os
+from werkzeug.utils import secure_filename
+
+from db import db, cursor
+from api import api, bcrypt
+from extensions import socketio
+
+# ======================================================
+# APP INIT
+# ======================================================
+app = Flask(__name__)
+
+BASE_DIR = os.path.dirname(os.path.abspath(__file__))
+UPLOAD_FOLDER = os.path.join(BASE_DIR, "static/uploads")
+os.makedirs(UPLOAD_FOLDER, exist_ok=True)
+
+app.config["UPLOAD_FOLDER"] = UPLOAD_FOLDER
+app.config["SECRET_KEY"] = "kunci-rahasia-teman-tukang-yang-kuat"
+
+# ======================================================
+# JWT CONFIG (SECURE)
+# ======================================================
+app.config["JWT_SECRET_KEY"] = "jwt-rahasia-teman-tukang"
+app.config["JWT_ACCESS_TOKEN_EXPIRES"] = timedelta(hours=6)
+app.config["JWT_TOKEN_LOCATION"] = ["headers"]
+app.config["JWT_HEADER_NAME"] = "Authorization"
+app.config["JWT_HEADER_TYPE"] = "Bearer"
+
+JWTManager(app)
+
+# ======================================================
+# RATE LIMITER
+# ======================================================
+# limiter = Limiter(
+#     get_remote_address,
+#     app=app,
+#     default_limits=["200 per day", "50 per hour"]
+# )
+limiter.init_app(app)
+# ======================================================
+# CORS
+# ======================================================
+CORS(
+    app,
+    resources={r"/api/*": {"origins": "*"}},
+    supports_credentials=True
+)
+
+# ======================================================
+# SOCKET.IO
+# ======================================================
+# socketio = SocketIO(
+#     app,
+#     cors_allowed_origins="*",
+#     async_mode="eventlet"
+# )
+socketio.init_app(app)
+import socket_chat  # wajib setelah socketio init
+
+# ======================================================
+# EXTENSIONS
+# ======================================================
+bcrypt.init_app(app)
+app.register_blueprint(api)
+
+# ======================================================
+# LOGGING AMAN (STEP 8.6)
+# ======================================================
+logging.basicConfig(
+    level=logging.INFO,
+    format="%(asctime)s | %(levelname)s | %(message)s"
+)
+logger = logging.getLogger(__name__)
+
+@app.before_request
+def start_timer():
+    request.start_time = time()
+
+@app.after_request
+def log_response(response):
+    if request.path.startswith("/api"):
+        duration = round(time() - getattr(request, "start_time", time()), 4)
+        logger.info(
+            "%s %s | %s | %sms | %s",
+            request.method,
+            request.path,
+            response.status_code,
+            int(duration * 1000),
+            request.remote_addr
+        )
+    return response
+>>>>>>> 8d9d115 (api/utils)
 
 class Admin:
     def __init__(self, db_cursor):
